@@ -14,7 +14,7 @@ http.createServer((req, res) => {
     }
     res.writeHead(200, { 'Content-Type': 'text/html' });
     //write the html stuff
-    res.write(fs.readFileSync("index.html", "utf-8", (e, d) => {
+    res.write(fs.readFileSync("styles.html", "utf-8", (e, d) => {
         return d;
     }));
     //how many to test
