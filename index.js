@@ -26,7 +26,7 @@ http.createServer((req, res) => {
     res.write("<p id='load'>Loading...</p>"); //loading thing with load id so we can easily change it
     let done=0; //number of projects done checkingg
     //const c=[]; //projects that are cloud...
-    //set up css stuff so it looks nice!
+    //set up stuff so it looks nice!
     res.write("<div class='grid-container'>");
 
     //send the request to get the trending games
@@ -51,7 +51,7 @@ http.createServer((req, res) => {
                 done++;
                 if (a[0]) {
                     res.write(`<script>
-                        document.getElementById(${a[1]}).innerHTML="<img src=${t[a[1]].image}><div class='desc'><a href='https://scratch.mit.edu/projects/${t[i].id}' target='_blank'>${t[a[1]].title}</a><br>by:${t[a[1]].author.username}<br>Ranking:${a[1]+1+offset}</div>";
+                        document.getElementById(${a[1]}).innerHTML="<img src=${t[a[1]].image}><div class='desc'><a href='https://scratch.mit.edu/projects/${t[i].id}' target='_blank'>${t[a[1]].title}</a><br>by: ${t[a[1]].author.username}<br>Ranking: ${a[1]+1+offset}</div>";
                     </script>`);
                     /*
                     res.write("<div class='gallery'>");
