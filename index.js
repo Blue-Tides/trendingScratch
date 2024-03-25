@@ -4,12 +4,17 @@ const fs = require("fs");
 http.createServer((req, res) => {
     function end() {
         res.write("</div>");
-        res.write("<script> document.getElementById('load').remove();</script>");
+        res.write(`<script> document.getElementById('load').remove();
+            Array.from(document.getElementsByClassName("gallery")).forEach((e)=>{
+                //console.log(e.innerHTML);
+                if(e.innerHTML=="") e.remove();
+            });
+        </script>`);
         res.end();
     }
     res.writeHead(200, { 'Content-Type': 'text/html' });
     //write the html stuff
-    res.write(fs.readFileSync("styles.html", "utf-8", (e, d) => {
+    res.write(fs.readFileSync("index.html", "utf-8", (e, d) => {
         return d;
     }));
     //how many to test
@@ -31,7 +36,8 @@ http.createServer((req, res) => {
         async function checkForCloud(i) {
             let a = [false, i];
             let cloudPromise = new Promise((res, rej) => {
-                request("GET", `https://clouddata.scratch.mit.edu/logs?projectid=${t[i].id}&limit=1&offset=0`).done((r) => {
+                request("GET", `https://clouddata.scratch.mit.edu/logs?projectid=${t[i].id}&limit=1&offset=0`).done((r,rj) => {
+                    if(rj) res(a);
                     a[0] = r.getBody().toString() != "[]";
                     //console.log(a[0]);
                     res(a);
@@ -40,13 +46,18 @@ http.createServer((req, res) => {
             return await cloudPromise;
         }
         for (let i = 0; i < test; i++) {
+            res.write(`<div class='gallery' id=${i}></div>`);
             checkForCloud(i).then((a) => {
                 done++;
                 if (a[0]) {
+                    res.write(`<script>
+                        document.getElementById(${a[1]}).innerHTML="<img src=${t[a[1]].image}><div class='desc'><a href='https://scratch.mit.edu/projects/${t[i].id}' target='_blank'>${t[a[1]].title}</a><br>by:${t[a[1]].author.username}<br>Ranking:${a[1]+1+offset}</div>";
+                    </script>`);
+                    /*
                     res.write("<div class='gallery'>");
                     res.write(`<img src=${t[a[1]].image}>`);
                     res.write(`<div class='desc'><a href='https://scratch.mit.edu/projects/${t[i].id}' target='_blank'>${t[a[1]].title}</a><br>by:${t[a[1]].author.username}<br>Ranking:${a[1]+1+offset}</div>`);
-                    res.write("</div>");
+                    res.write("</div>");*/
                 }
                 if(done==test) end();
             });
